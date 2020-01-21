@@ -80,39 +80,42 @@ class _SquareState extends State<Square> {
   double top, left, height, width;
   int directionV = -1;
   int directionH = -1;
-  int offsetH, offsetV, max = 5;
+  double offsetH, offsetV;
+  int max = 5;
+
+  void updateOffsets() {
+    var angle = randomAngle();
+    this.offsetH = this.directionH * 2 * cos(angle).abs();
+    this.offsetV = this.directionV * 2 * sin(angle).abs();
+  }
 
   _SquareState(top, left, height, width) {
     this.top = top;
     this.left = left;
     this.height = height;
     this.width = width;
-    this.offsetH = this.directionH * generator.nextInt(max);
-    this.offsetV = this.directionV * generator.nextInt(max);
+    this.offsetH = this.directionH * 2 * cos(randomAngle()).abs();
+    this.offsetV = this.directionV * 2 * sin(randomAngle()).abs();
     Timer.periodic(Duration(milliseconds: 5), (timer) {
       setState(() {
         if (this.left >= limitRight - width) {
           this.directionH = -1;
-          this.offsetH = this.directionH * generator.nextInt(max);
-          this.offsetV = this.directionV * generator.nextInt(max);
+          this.updateOffsets();
         }
         if (this.left <= limitLeft) {
           this.directionH = 1;
-          this.offsetH = this.directionH * generator.nextInt(max);
-          this.offsetV = this.directionV * generator.nextInt(max);
+          this.updateOffsets();
         }
         if (this.top >= limitBottom - height) {
           this.directionV = -1;
-          this.offsetH = this.directionH * generator.nextInt(max);
-          this.offsetV = this.directionV * generator.nextInt(max);
+          this.updateOffsets();
         }
         if (this.top <= limitTop) {
           this.directionV = 1;
-          this.offsetH = this.directionH * generator.nextInt(max);
-          this.offsetV = this.directionV * generator.nextInt(max);
+          this.updateOffsets();
         }
-        this.left = this.left + this.offsetH;
-        this.top = this.top + this.offsetV;
+        this.left += this.offsetH;
+        this.top += this.offsetV;
       });
     });
   }
@@ -129,4 +132,8 @@ class _SquareState extends State<Square> {
       ),
     );
   }
+}
+
+double randomAngle() {
+  return generator.nextInt(360) * pi / 180;
 }
